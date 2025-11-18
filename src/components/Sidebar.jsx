@@ -1,39 +1,65 @@
-import { NavLink } from "react-router"
-import { HamburgerIcon } from "../icon/icon"
-import useAuthStore from "../stores/authStore"
+import { NavLink, useNavigate } from "react-router";
+import { HamburgerIcon } from "../icon/icon";
+import { CalendarDays, LayoutGrid, Users, LogOut } from "lucide-react";
+import useAuthStore from "../stores/authStore";
 
-function Sidebar() {
-    const logout = useAuthStore(state => state.logout)
+export default function Sidebar() {
+    const logout = useAuthStore(state => state.logout);
+    const navigate = useNavigate();
 
-    const onSubmit = async () => {
-        // await new Promise()
-
-        logout()
-        navigator('/')
+    const onLogout = () => {
+        logout();
+        navigate('/');
     }
 
-    return (
-        <div className="drawer lg:drawer-open w-fit">
-            <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-            <div className="drawer flex flex-col items-center justify-start w-1/4 ">
-                {/* Page content here */}
-                <label htmlFor="my-drawer-3" className="cursor-pointer h-screen lg:hidden mx-8">
-                    <HamburgerIcon className='w-10 my-4' />
-                </label>
-            </div>
-            <div className="drawer-side">
-                <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
-                <div className="menu bg-base-100 min-h-full w-80 p-4 flex-col justify-between">
-                    <ul className='text-2xl flex flex-col gap-4'>
-                        <li><NavLink to='/'>ตารางการจอง</NavLink></li>
-                        <li><NavLink to='pitch'>จัดการสนาม</NavLink></li>
-                        <li><NavLink to='user'>จัดการผู้ใช้</NavLink></li>
-                    </ul>
-                    <button onClick={onSubmit} className="mx-auto font-bold text-white bg-red-500 hover:bg-red-400 cursor-pointer px-26 rounded-sm py-2  text-end text-2xl">Logout</button>
-                </div>
-            </div>
-        </div>
-    )
-}
+    const navItems = [
+        { label: "ตารางการจอง", path: "/", icon: CalendarDays },
+        { label: "จัดการสนาม", path: "/pitch", icon: LayoutGrid },
+        { label: "จัดการผู้ใช้", path: "/user", icon: Users },
+    ];
 
-export default Sidebar
+    return (
+        <div className="flex h-screen">
+            {/* Sidebar */}
+            <aside className="min-w-80 bg-white min-h-full flex flex-col justify-between p-6 shadow-lg">
+                <div>
+                    <h2 className="text-2xl font-bold mb-6">ระบบจัดการสนาม</h2>
+                    <ul className="flex flex-col gap-4 text-lg">
+                        {navItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <li key={item.path}>
+                                    <NavLink
+                                        to={item.path}
+                                        className={({ isActive }) =>
+                                            `flex items-center gap-3 px-4 py-2 rounded-md transition-colors ${isActive
+                                                ? "bg-blue-500 text-white"
+                                                : "text-gray-700 hover:bg-gray-100"
+                                            }`
+                                        }
+                                    >
+                                        <Icon className="w-5 h-5" />
+                                        <span>{item.label}</span>
+                                    </NavLink>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+
+                <button
+                    onClick={onLogout}
+                    className="mt-6 w-full py-2 text-white font-semibold bg-red-500 hover:bg-red-400 rounded-md transition-all flex items-center justify-center gap-2"
+                >
+                    <LogOut className="w-5 h-5" />
+                    Logout
+                </button>
+            </aside>
+
+            {/* Main content */}
+            <main className="flex-1 bg-gray-50 p-6 overflow-auto">
+                {/* Page content จะมาวางตรงนี้ */}
+            </main>
+        </div>
+    );
+}

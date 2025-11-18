@@ -8,9 +8,7 @@ const useAuthStore = create(
             user: null,
             token: '',
             login: async (input) => {
-                console.log('input', input)
                 const resp = await authApi.post('/login', input)
-                console.log('resp', resp)
                 set({ token: resp.data.token, user: resp.data.user })
                 return resp
             },
@@ -19,7 +17,7 @@ const useAuthStore = create(
             },
         }),
         {
-            name: 'acessToken',
+            name: 'accessToken',
             storage: createJSONStorage(() => localStorage)
         }
     )
